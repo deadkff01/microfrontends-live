@@ -7,7 +7,9 @@ function App() {
   const handleData = useCallback(
     (event) => {
       const child = itemsRef?.current?.contentWindow;
-      child.postMessage(event.data, "http://localhost:3002");
+
+      const data = typeof event.data === "string" ? event.data : "";
+      child.postMessage(data, "http://localhost:3002");
     },
     [itemsRef]
   );
@@ -25,6 +27,7 @@ function App() {
         src="http://localhost:3001"
         frameBorder="0"
       ></iframe>
+      <br />
       <iframe
         ref={itemsRef}
         title="items"

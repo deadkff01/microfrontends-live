@@ -1,29 +1,39 @@
 import "./App.css";
 import { useState, useEffect } from "react";
+import { getItems } from "./services/itemsService";
 
 function App() {
-  const [searchTerm, setSearchTem] = useState("");
-  const itemList = ["some", "something", "playstation", "xbox", "computer"];
+  const [itemsList, setItemsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     window.addEventListener(
       "message",
-      (event) => {
-        setSearchTem(event.data);
+      async (event) => {
+        try {
+          setIsLoading(true);
+          const response = await getItems(event.data);
+          console.log(response);
+          setItemsList(response.data);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setIsLoading(false);
+        }
       },
       false
     );
   }, []);
 
-  console.log(searchTerm);
+  console.log(itemsList);
 
-  const filtredList = itemList.filter((item) =>
-    item.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
-  );
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <div className="App">
-      {filtredList.map((item, index) => (
+      {itemsList.map((item, index) => (
         <div key={index}>{item}</div>
       ))}
     </div>
